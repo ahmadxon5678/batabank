@@ -1,0 +1,33 @@
+<svg width="900" height="560" viewBox="0 0 900 560" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="560" fill="#F8F7F2"/>
+  <path d="M0 0h900v560H0z" fill="url(#wash)"/>
+  <g transform="translate(450 270)">
+    <path d="M-266-22c47-42 80-81 146-119 71-41 157-49 237-19 79 30 137 93 171 156-35 70-92 121-167 150-89 35-188 23-266-31-52-37-90-83-121-137Z" fill="#E9E5DB"/>
+    <path d="M-248-26c44-40 80-72 141-105 64-35 140-41 211-16 74 26 129 84 160 143-32 64-84 109-153 136-80 31-171 20-242-29-49-34-85-76-117-129Z" fill="#FDF9EF"/>
+    <path d="M-121 26c-33-16-49-44-47-79 2-38 21-70 51-95 48-40 116-48 172-22 43 20 70 56 79 104 10 55-10 99-56 126-57 34-139 28-199-34Z" fill="#F2BE7C"/>
+    <path d="M-147-63c-4-44 7-82 34-114 42-50 118-63 177-32 30 16 53 42 65 76-43-15-84-22-125-18-55 5-104 34-151 88Z" fill="#7B3B25"/>
+    <path d="M-158-119c45-70 127-102 213-83 42 9 77 30 105 61-27 8-69 9-126 3-76-8-139 0-192 19Z" fill="#C8242C"/>
+    <path d="M-150-123c39-25 85-37 137-34 52 4 98 19 138 47" stroke="#221B18" stroke-width="10" stroke-linecap="round"/>
+    <path d="M-138 19c41 45 92 69 153 72 65 2 114-16 147-54 12 53 5 95-22 126-36 42-94 56-166 42-76-15-124-54-144-117-7-22 3-47 32-69Z" fill="#7BCBEF"/>
+    <path d="M-140 21c34 28 78 46 132 52 61 7 114-3 159-30" stroke="#4CB6DF" stroke-width="8" stroke-linecap="round"/>
+    <path d="M-151 65c41 24 89 38 144 41 57 4 108-4 153-24" stroke="#55BFE7" stroke-width="7" stroke-linecap="round" opacity=".8"/>
+    <path d="M-82-36c26-12 52-12 78 0" stroke="#1D1B16" stroke-width="7" stroke-linecap="round"/>
+    <path d="M49-35c23-13 47-15 72-7" stroke="#1D1B16" stroke-width="7" stroke-linecap="round"/>
+    <path d="M-81-8c24 7 47 4 67-10" stroke="#1D1B16" stroke-width="5" stroke-linecap="round"/>
+    <path d="M53-10c22 6 44 3 64-10" stroke="#1D1B16" stroke-width="5" stroke-linecap="round"/>
+    <path d="M-151-10c-31-5-50 6-57 31-8 27 7 50 43 68" stroke="#221B18" stroke-width="7" stroke-linecap="round"/>
+    <path d="M162-7c28-6 46 3 55 27 10 26-4 50-40 72" stroke="#221B18" stroke-width="7" stroke-linecap="round"/>
+    <path d="M-175 109c-23 70-49 113-79 128h442c-37-19-62-61-76-125-72 31-167 30-287-3Z" fill="#F2BE7C"/>
+    <path d="M-169 106c68 38 160 48 279 17" stroke="#221B18" stroke-width="8" stroke-linecap="round"/>
+    <path d="M147 133l55 45-39 25-35-49 19-21Z" fill="#B51F28"/>
+    <path d="M-130-178c20-28 38-44 54-48 2 19-2 36-13 51 22-16 45-23 69-22-8 19-22 34-41 45" stroke="#E97839" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <text x="689" y="498" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#1D1B16" transform="rotate(-6 689 498)">O'RIK GULI</text>
+  <defs>
+    <radialGradient id="wash" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(462 252) rotate(90) scale(342 520)">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset=".78" stop-color="#F1EEE7"/>
+      <stop offset="1" stop-color="#F8F7F2"/>
+    </radialGradient>
+  </defs>
+</svg>

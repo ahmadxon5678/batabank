@@ -1,0 +1,15 @@
+<svg width="560" height="560" viewBox="0 0 560 560" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="560" height="560" fill="#9AD600"/>
+  <g stroke="#fff" stroke-width="17" stroke-linecap="butt">
+    <path d="M271 131a149 149 0 1 0 0 298"/>
+    <path d="M271 171a109 109 0 1 0 0 218"/>
+    <path d="M271 211a69 69 0 1 0 0 138"/>
+    <path d="M271 251a29 29 0 1 0 0 58"/>
+    <path d="M318 280h74"/>
+    <path d="M360 280a89 89 0 0 1-89 89"/>
+    <path d="M400 280a129 129 0 0 1-129 129"/>
+  </g>
+  <circle cx="380" cy="153" r="53" stroke="#fff" stroke-width="17"/>
+  <text x="280" y="478" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="800" fill="#fff">GOETHE</text>
+  <text x="280" y="538" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="800" fill="#fff">INSTITUT</text>
+</svg>

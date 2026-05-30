@@ -1,8 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8f7f2;
+  --foreground: #18392b;
+  --brand-primary: #25c46a;
+  --brand-deep: #169c57;
+  --brand-soft: #6ddb98;
+  --brand-logo: #48dd2f;
+  --brand-mint: #a8edc2;
+  --brand-line: #e8e5dc;
+  --brand-muted: #4e6b5d;
+  --brand-warm: #ffc857;
+  --brand-surface: #ffffff;
+  --shadow-soft: 0 18px 50px rgb(24 57 43 / 0.07);
+  --shadow-button: 0 12px 26px rgb(37 196 106 / 0.22);
 }
 
 @theme inline {
@@ -12,15 +23,107 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+main,
+section,
+article,
+div {
+  min-width: 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  outline-color: var(--brand-primary);
+}
+
+::selection {
+  background: var(--brand-mint);
+  color: var(--foreground);
+}
+
+.brand-gradient {
+  background:
+    radial-gradient(circle at 76% 16%, rgb(109 219 152 / 0.36), transparent 32%),
+    linear-gradient(135deg, var(--brand-deep), var(--brand-primary) 58%, var(--brand-soft));
+}
+
+.brand-panel {
+  border: 1px solid var(--brand-line);
+  background: var(--brand-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.focus-ring {
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.focus-ring:focus-visible {
+  outline: 3px solid rgb(168 237 194 / 0.8);
+  outline-offset: 2px;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.nav-logo {
+  --nav-logo-height: 54px;
+  display: block;
+  width: auto;
+  height: var(--nav-logo-height);
+  background: transparent;
+  object-fit: contain;
+}
+
+.hero-logo {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  background: transparent;
+  object-fit: contain;
+}
+
+.footer-logo {
+  --footer-logo-width: 280px;
+  display: block;
+  width: var(--footer-logo-width);
+  max-width: 80vw;
+  height: auto;
+  background: transparent;
+  object-fit: contain;
+}
+
+@media (max-width: 768px) {
+  .nav-logo {
+    --nav-logo-height: 40px;
+  }
+
+  .footer-logo {
+    --footer-logo-width: 220px;
+  }
 }
