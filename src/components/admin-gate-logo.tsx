@@ -23,22 +23,39 @@ export function AdminGateLogo() {
         <BrandLogo size="md" />
       </button>
       {open ? (
-        <div className="absolute left-0 z-40 mt-2 w-[min(320px,calc(100vw-32px))] rounded-[18px] border border-[var(--brand-line)] bg-white p-4 shadow-[var(--shadow-soft)]">
-          <p className="text-sm font-bold text-[var(--foreground)]">Admin kirish</p>
-          <p className="mt-1 text-xs leading-5 text-[var(--brand-muted)]">
-            Maxfiy parol to'g'ri bo'lsa, hozirgi hisob admin sifatida faollashadi.
-          </p>
-          <form action={unlockAdminGate} className="mt-3 flex gap-2">
-            <input
-              className="focus-ring min-w-0 flex-1 rounded-[14px] border border-[var(--brand-line)] px-3 py-2 text-sm"
-              name="secret"
-              placeholder="Maxfiy parol"
-              type="password"
-            />
-            <button className="focus-ring rounded-[14px] bg-[var(--brand-primary)] px-4 py-2 text-sm font-bold text-white">
-              Kirish
-            </button>
-          </form>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#18392b]/30 px-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-[24px] border border-[var(--brand-line)] bg-white p-6 shadow-[var(--shadow-soft)]">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xl font-bold text-[var(--foreground)]">Admin kirish</p>
+                <p className="mt-2 text-sm leading-6 text-[var(--brand-muted)]">
+                  Avval hisobga kirgan bo'ling. Maxfiy parol to'g'ri bo'lsa, hozirgi hisob admin sifatida faollashadi.
+                </p>
+              </div>
+              <button
+                className="focus-ring rounded-[12px] border border-[var(--brand-line)] px-3 py-1.5 text-sm font-bold text-[var(--brand-muted)] hover:bg-[var(--background)]"
+                onClick={() => setOpen(false)}
+                type="button"
+              >
+                X
+              </button>
+            </div>
+            <form action={unlockAdminGate} className="mt-5 grid gap-3">
+              <label className="block">
+                <span className="text-sm font-semibold text-[var(--foreground)]">Maxfiy parol</span>
+                <input
+                  autoFocus
+                  className="focus-ring mt-2 w-full rounded-[14px] border border-[var(--brand-line)] bg-white px-4 py-3 text-[var(--foreground)]"
+                  name="secret"
+                  placeholder="Parolni kiriting"
+                  type="password"
+                />
+              </label>
+              <button className="focus-ring min-h-11 rounded-[14px] bg-[var(--brand-primary)] px-5 py-3 text-sm font-bold text-white shadow-[var(--shadow-button)] hover:bg-[var(--brand-deep)]">
+                Adminni faollashtirish
+              </button>
+            </form>
+          </div>
         </div>
       ) : null}
     </div>
