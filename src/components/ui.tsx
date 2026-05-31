@@ -1,7 +1,9 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { AdminGateLogo } from "@/components/admin-gate-logo";
 import { BrandLogo } from "@/components/brand-logo";
 import { LanguageSwitch } from "@/components/language-switch";
+import { NotificationBell } from "@/components/notification-bell";
 import { getDictionary, type Locale } from "@/lib/i18n";
 
 type ButtonLinkProps = {
@@ -50,23 +52,35 @@ export function SecondaryButton({ children, className = "" }: { children: ReactN
   );
 }
 
-export function Navbar({ active, locale }: { active?: "leaderboard" | "dashboard" | "admin"; locale: Locale }) {
+export function Navbar({
+  active,
+  locale,
+  notifications = [],
+}: {
+  active?: "leaderboard" | "dashboard" | "admin" | "analytics" | "report";
+  locale: Locale;
+  notifications?: string[];
+}) {
   const t = getDictionary(locale);
 
   return (
     <header className="border-b border-[var(--brand-line)] bg-[rgb(248_247_242/0.88)] backdrop-blur">
       <nav className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-4">
-        <BrandLogo href="/" size="md" />
+        <AdminGateLogo />
         <div className="flex flex-wrap items-center justify-end gap-1 text-sm font-medium max-sm:w-full max-sm:justify-start">
           <NavLink href="/leaderboard" active={active === "leaderboard"}>
             {t.nav.leaderboard}
           </NavLink>
+          <NavLink href="/analytics" active={active === "analytics"}>
+            Tahlil
+          </NavLink>
+          <NavLink href="/report" active={active === "report"}>
+            Hisobot
+          </NavLink>
           <NavLink href="/dashboard" active={active === "dashboard"}>
             {t.nav.dashboard}
           </NavLink>
-          <NavLink href="/admin" active={active === "admin"}>
-            {t.nav.admin}
-          </NavLink>
+          {notifications.length ? <NotificationBell messages={notifications} /> : null}
           <LanguageSwitch locale={locale} />
           <ButtonLink href="/login" className="ml-2 px-4 py-2" variant="primary">
             {t.nav.login}

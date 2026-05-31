@@ -12,15 +12,15 @@ export const dictionaries = {
   uz: {
     nav: {
       leaderboard: "Reyting",
-      dashboard: "Dashboard",
+      dashboard: "Kabinet",
       admin: "Admin",
-      login: "Login",
+      login: "Kirish",
     },
     footer: "Ishlatilgan batareyalarni xavfsiz yig'ish uchun jamoaviy platforma.",
     common: {
-      join: "Challengega qo'shilish",
-      login: "Login",
-      dashboard: "Dashboard",
+      join: "Tashkilotni qo'shish",
+      login: "Kirish",
+      dashboard: "Kabinet",
       saveProfile: "Profilni saqlash",
       submitReview: "Tekshiruvga yuborish",
       reject: "Rad etish",

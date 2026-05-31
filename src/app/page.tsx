@@ -2,38 +2,19 @@ import { ArrowDown, ArrowLeft, ArrowRight, BatteryCharging, Camera, CheckCircle2
 import type { LucideIcon } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { ButtonLink, FeatureCard, Footer, MetricCard, Navbar, SectionHeading } from "@/components/ui";
-import { createClient, hasSupabaseEnv } from "@/lib/supabase/server";
 import { formatNumber } from "@/lib/format";
 import { getDictionary, getLocale } from "@/lib/i18n";
-import type { Submission } from "@/lib/types";
+import { getApprovedStats } from "@/lib/public-stats";
 
 export const dynamic = "force-dynamic";
 
 async function getTotals() {
-  if (!hasSupabaseEnv()) {
-    return { institutions: 0, containers: 0, batteries: 0 };
-  }
-
-  try {
-    const supabase = await createClient();
-    const { data } = await supabase
-      .from("submissions")
-      .select("profile_id, containers_count, estimated_battery_count")
-      .eq("status", "approved");
-
-    const approved = (data ?? []) as Pick<
-      Submission,
-      "profile_id" | "containers_count" | "estimated_battery_count"
-    >[];
-
-    return {
-      institutions: new Set(approved.map((item) => item.profile_id)).size,
-      containers: approved.reduce((sum, item) => sum + item.containers_count, 0),
-      batteries: approved.reduce((sum, item) => sum + item.estimated_battery_count, 0),
-    };
-  } catch {
-    return { institutions: 0, containers: 0, batteries: 0 };
-  }
+  const { institutions } = await getApprovedStats();
+  return {
+    institutions: institutions.length,
+    containers: institutions.reduce((sum, item) => sum + item.containers, 0),
+    batteries: institutions.reduce((sum, item) => sum + item.batteries, 0),
+  };
 }
 
 export default async function Home() {

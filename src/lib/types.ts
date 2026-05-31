@@ -1,6 +1,14 @@
 export type InstitutionType = "school" | "university" | "government" | "other";
 export type ProfileRole = "institution" | "admin";
+export type ProfileApprovalStatus = "pending" | "approved" | "rejected";
 export type SubmissionStatus = "pending" | "approved" | "rejected";
+export type PickupStatus =
+  | "not_requested"
+  | "requested"
+  | "scheduled"
+  | "picked_up"
+  | "delivered_to_partner"
+  | "cancelled";
 
 export type Profile = {
   id: string;
@@ -10,6 +18,11 @@ export type Profile = {
   contact_person: string;
   contact: string;
   role: ProfileRole;
+  approval_status: ProfileApprovalStatus;
+  approval_note: string | null;
+  approved_by: string | null;
+  approved_at: string | null;
+  rejected_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -23,6 +36,12 @@ export type Submission = {
   collection_date: string;
   status: SubmissionStatus;
   admin_note: string | null;
+  message: string | null;
+  pickup_requested: boolean;
+  pickup_status: PickupStatus;
+  pickup_address: string | null;
+  pickup_note: string | null;
+  pickup_updated_at: string | null;
   reviewed_by: string | null;
   reviewed_at: string | null;
   created_at: string;
@@ -76,7 +95,9 @@ export type Database = {
     Enums: {
       institution_type: InstitutionType;
       profile_role: ProfileRole;
+      profile_approval_status: ProfileApprovalStatus;
       submission_status: SubmissionStatus;
+      pickup_status: PickupStatus;
     };
     CompositeTypes: Record<string, never>;
   };

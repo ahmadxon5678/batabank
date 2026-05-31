@@ -2,7 +2,16 @@ create extension if not exists "pgcrypto";
 
 create type public.institution_type as enum ('school', 'university', 'government', 'other');
 create type public.profile_role as enum ('institution', 'admin');
+create type public.profile_approval_status as enum ('pending', 'approved', 'rejected');
 create type public.submission_status as enum ('pending', 'approved', 'rejected');
+create type public.pickup_status as enum (
+  'not_requested',
+  'requested',
+  'scheduled',
+  'picked_up',
+  'delivered_to_partner',
+  'cancelled'
+);
 
 create table public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
@@ -12,6 +21,11 @@ create table public.profiles (
   contact_person text not null,
   contact text not null,
   role public.profile_role not null default 'institution',
+  approval_status public.profile_approval_status not null default 'pending',
+  approval_note text,
+  approved_by uuid references public.profiles(id),
+  approved_at timestamptz,
+  rejected_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -25,6 +39,12 @@ create table public.submissions (
   collection_date date not null,
   status public.submission_status not null default 'pending',
   admin_note text,
+  message text,
+  pickup_requested boolean not null default false,
+  pickup_status public.pickup_status not null default 'not_requested',
+  pickup_address text,
+  pickup_note text,
+  pickup_updated_at timestamptz,
   reviewed_by uuid references public.profiles(id),
   reviewed_at timestamptz,
   created_at timestamptz not null default now()
@@ -71,7 +91,8 @@ begin
     region_city,
     contact_person,
     contact,
-    role
+    role,
+    approval_status
   )
   values (
     new.id,
@@ -80,7 +101,8 @@ begin
     coalesce(new.raw_user_meta_data ->> 'region_city', ''),
     coalesce(new.raw_user_meta_data ->> 'contact_person', ''),
     coalesce(new.raw_user_meta_data ->> 'contact', new.email),
-    'institution'
+    'institution',
+    'pending'
   )
   on conflict (id) do nothing;
 
@@ -107,18 +129,44 @@ as $$
   );
 $$;
 
+create or replace function public.guard_profile_sensitive_fields()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not public.is_admin() then
+    if new.role is distinct from old.role
+      or new.approval_status is distinct from old.approval_status
+      or new.approval_note is distinct from old.approval_note
+      or new.approved_by is distinct from old.approved_by
+      or new.approved_at is distinct from old.approved_at
+      or new.rejected_at is distinct from old.rejected_at then
+      raise exception 'Only admins can change approval fields';
+    end if;
+  end if;
+
+  return new;
+end;
+$$;
+
+create trigger profiles_guard_sensitive_fields
+before update on public.profiles
+for each row execute function public.guard_profile_sensitive_fields();
+
 alter table public.profiles enable row level security;
 alter table public.submissions enable row level security;
 alter table public.submission_photos enable row level security;
 
-create policy "Profiles are publicly readable for leaderboard"
+create policy "Profiles are readable by owner and admins"
 on public.profiles for select
-using (true);
+using (auth.uid() = id or public.is_admin());
 
 create policy "Institutions update own profile"
 on public.profiles for update
 using (auth.uid() = id)
-with check (auth.uid() = id and role = 'institution');
+with check (auth.uid() = id);
 
 create policy "Admins update profiles"
 on public.profiles for update
@@ -139,7 +187,16 @@ using (public.is_admin());
 
 create policy "Institutions create own submissions"
 on public.submissions for insert
-with check (auth.uid() = profile_id and status = 'pending');
+with check (
+  auth.uid() = profile_id
+  and status = 'pending'
+  and exists (
+    select 1
+    from public.profiles
+    where profiles.id = auth.uid()
+      and profiles.approval_status = 'approved'
+  )
+);
 
 create policy "Admins review submissions"
 on public.submissions for update
@@ -210,3 +267,91 @@ using (
       and submissions.status = 'approved'
   )
 );
+
+create or replace function public.public_leaderboard()
+returns table (
+  profile_id uuid,
+  institution_name text,
+  institution_type public.institution_type,
+  region_city text,
+  approved_containers bigint,
+  approved_batteries bigint,
+  approved_weight numeric,
+  latest_activity_date date
+)
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select
+    profiles.id,
+    profiles.institution_name,
+    profiles.institution_type,
+    profiles.region_city,
+    coalesce(sum(submissions.containers_count), 0)::bigint,
+    coalesce(sum(submissions.estimated_battery_count), 0)::bigint,
+    sum(submissions.estimated_weight_kg),
+    max(submissions.collection_date)
+  from public.profiles
+  join public.submissions on submissions.profile_id = profiles.id
+  where profiles.approval_status = 'approved'
+    and submissions.status = 'approved'
+  group by profiles.id, profiles.institution_name, profiles.institution_type, profiles.region_city
+  order by coalesce(sum(submissions.containers_count), 0) desc, coalesce(sum(submissions.estimated_battery_count), 0) desc;
+$$;
+
+create or replace function public.public_recent_activity()
+returns table (
+  profile_id uuid,
+  institution_name text,
+  institution_type public.institution_type,
+  region_city text,
+  containers_count integer,
+  estimated_battery_count integer,
+  estimated_weight_kg numeric,
+  collection_date date,
+  reviewed_at timestamptz,
+  pickup_status public.pickup_status
+)
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select
+    profiles.id,
+    profiles.institution_name,
+    profiles.institution_type,
+    profiles.region_city,
+    submissions.containers_count,
+    submissions.estimated_battery_count,
+    submissions.estimated_weight_kg,
+    submissions.collection_date,
+    submissions.reviewed_at,
+    submissions.pickup_status
+  from public.submissions
+  join public.profiles on profiles.id = submissions.profile_id
+  where profiles.approval_status = 'approved'
+    and submissions.status = 'approved'
+  order by coalesce(submissions.reviewed_at, submissions.created_at) desc
+  limit 25;
+$$;
+
+create or replace function public.public_pickup_stats()
+returns table (
+  pickup_status public.pickup_status,
+  total bigint
+)
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select submissions.pickup_status, count(*)::bigint
+  from public.submissions
+  join public.profiles on profiles.id = submissions.profile_id
+  where profiles.approval_status = 'approved'
+    and submissions.status = 'approved'
+  group by submissions.pickup_status;
+$$;
