@@ -43,8 +43,10 @@ For Railway, add the same variables in the Railway service variables. In product
 1. Create a Supabase project.
 2. Run `supabase/schema.sql` for a fresh database, or run `supabase/20260601_government_update.sql` on an existing BataBank database.
 3. Create a private Storage bucket named `collection-photos`.
-4. Register the first admin user through `/register`.
-5. Promote the first admin in Supabase SQL:
+4. Add `ADMIN_GATE_SECRET` and `SUPABASE_SERVICE_ROLE_KEY` in Railway variables.
+5. Admin access does not require registration. Click the logo 5 times and enter `ADMIN_GATE_SECRET`.
+
+Optional manual admin promotion:
 
 ```sql
 update public.profiles
@@ -70,8 +72,8 @@ where contact = 'admin@example.com'
 Admin panel access:
 - click the BataBank logo 5 times
 - enter `ADMIN_GATE_SECRET`
-- the currently logged-in user is promoted to admin automatically
-- after that `/admin` opens normally
+- registration/login is not required
+- `/admin` opens using the server-only Supabase service role key
 
 ## Badge Ladder
 

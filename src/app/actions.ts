@@ -56,15 +56,18 @@ async function requireUser() {
 }
 
 async function requireAdmin() {
-  const { supabase, user } = await requireUser();
-  const { data } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-  const profile = data as { role?: string } | null;
+  const cookieStore = await cookies();
+  const gate = cookieStore.get("batabank-admin-gate")?.value;
 
-  if (profile?.role !== "admin") {
+  if (gate !== "unlocked") {
     redirect(`/dashboard?error=${encodeURIComponent(messages.adminRequired)}`);
   }
 
-  return { supabase, user };
+  if (!hasSupabaseAdminEnv()) {
+    redirect(`/dashboard?error=${encodeURIComponent(messages.missingAdminEnv)}`);
+  }
+
+  return { supabase: createAdminClient() };
 }
 
 export async function registerInstitution(formData: FormData) {
@@ -228,7 +231,7 @@ export async function createSubmission(formData: FormData) {
 }
 
 export async function reviewSubmission(formData: FormData) {
-  const { supabase, user } = await requireAdmin();
+  const { supabase } = await requireAdmin();
   const submissionId = getString(formData, "submission_id");
   const decision = getString(formData, "decision");
   const adminNote = getString(formData, "admin_note");
@@ -242,7 +245,7 @@ export async function reviewSubmission(formData: FormData) {
     .update({
       status: decision as "approved" | "rejected",
       admin_note: adminNote || null,
-      reviewed_by: user.id,
+      reviewed_by: null,
       reviewed_at: new Date().toISOString(),
     })
     .eq("id", submissionId);
@@ -258,7 +261,7 @@ export async function reviewSubmission(formData: FormData) {
 }
 
 export async function reviewInstitution(formData: FormData) {
-  const { supabase, user } = await requireAdmin();
+  const { supabase } = await requireAdmin();
   const profileId = getString(formData, "profile_id");
   const decision = getString(formData, "decision");
   const approvalNote = getString(formData, "approval_note");
@@ -273,7 +276,7 @@ export async function reviewInstitution(formData: FormData) {
     .update({
       approval_status: decision,
       approval_note: approvalNote || null,
-      approved_by: decision === "approved" ? user.id : null,
+      approved_by: null,
       approved_at: decision === "approved" ? now : null,
       rejected_at: decision === "rejected" ? now : null,
     })
@@ -312,33 +315,11 @@ export async function updatePickupStatus(formData: FormData) {
 }
 
 export async function unlockAdminGate(formData: FormData) {
-  const { user } = await requireUser();
   const secret = getString(formData, "secret");
   const expected = process.env.ADMIN_GATE_SECRET;
 
   if (!expected || secret !== expected) {
     redirect(`/dashboard?error=${encodeURIComponent(messages.badSecret)}`);
-  }
-
-  if (!hasSupabaseAdminEnv()) {
-    redirect(`/dashboard?error=${encodeURIComponent(messages.missingAdminEnv)}`);
-  }
-
-  const admin = createAdminClient();
-  const { error } = await admin
-    .from("profiles")
-    .update({
-      role: "admin",
-      approval_status: "approved",
-      approval_note: null,
-      approved_by: user.id,
-      approved_at: new Date().toISOString(),
-      rejected_at: null,
-    })
-    .eq("id", user.id);
-
-  if (error) {
-    redirect(`/dashboard?error=${encodeURIComponent(error.message)}`);
   }
 
   const cookieStore = await cookies();

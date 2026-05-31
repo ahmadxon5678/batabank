@@ -5,7 +5,8 @@ import { Footer, Navbar, SectionHeading } from "@/components/ui";
 import { getBadgeForContainers } from "@/lib/badges";
 import { formatNumber, formatWeight } from "@/lib/format";
 import { getLocale, institutionTypeLabelsByLocale, type Locale } from "@/lib/i18n";
-import { createClient, hasSupabaseEnv } from "@/lib/supabase/server";
+import { createAdminClient, hasSupabaseAdminEnv } from "@/lib/supabase/admin";
+import { hasSupabaseEnv } from "@/lib/supabase/server";
 import type { PickupStatus, Profile, Submission, SubmissionPhoto } from "@/lib/types";
 
 type PageProps = {
@@ -38,18 +39,11 @@ export default async function AdminPage({ searchParams }: PageProps) {
   if (!hasSupabaseEnv()) return <SetupMissing />;
 
   const gate = (await cookies()).get("batabank-admin-gate")?.value;
-  if (gate !== "unlocked") redirect("/dashboard?error=Admin panel uchun logo orqali maxfiy kirishni oching");
+  if (gate !== "unlocked") redirect("/?error=Admin panel uchun logo orqali maxfiy kirishni oching");
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  if (!hasSupabaseAdminEnv()) redirect("/?error=SUPABASE_SERVICE_ROLE_KEY Railway sozlamasiga kiritilmagan");
 
-  if (!user) redirect("/login?error=Admin panel uchun login kerak");
-
-  const { data: profileData } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-  const profile = profileData as { role?: string } | null;
-  if (profile?.role !== "admin") redirect("/dashboard?error=Admin ruxsati kerak");
+  const supabase = createAdminClient();
 
   const { data: pendingProfiles } = await supabase
     .from("profiles")
@@ -137,7 +131,7 @@ export default async function AdminPage({ searchParams }: PageProps) {
   );
 }
 
-async function getSubmissionRows(supabase: Awaited<ReturnType<typeof createClient>>, status: "pending") {
+async function getSubmissionRows(supabase: ReturnType<typeof createAdminClient>, status: "pending") {
   const { data } = await supabase
     .from("submissions")
     .select("*, profiles(institution_name, institution_type, region_city, contact_person, contact), submission_photos(*)")
@@ -147,7 +141,7 @@ async function getSubmissionRows(supabase: Awaited<ReturnType<typeof createClien
   return signRows(supabase, (data ?? []) as unknown as SubmissionRow[]);
 }
 
-async function getReviewedRows(supabase: Awaited<ReturnType<typeof createClient>>) {
+async function getReviewedRows(supabase: ReturnType<typeof createAdminClient>) {
   const { data } = await supabase
     .from("submissions")
     .select("*, profiles(institution_name, institution_type, region_city, contact_person, contact), submission_photos(*)")
@@ -158,7 +152,7 @@ async function getReviewedRows(supabase: Awaited<ReturnType<typeof createClient>
   return signRows(supabase, (data ?? []) as unknown as SubmissionRow[]);
 }
 
-async function signRows(supabase: Awaited<ReturnType<typeof createClient>>, rows: SubmissionRow[]) {
+async function signRows(supabase: ReturnType<typeof createAdminClient>, rows: SubmissionRow[]) {
   return Promise.all(
     rows.map(async (submission) => {
       const signedPhotos = await Promise.all(

@@ -29,7 +29,7 @@ export function AdminGateLogo() {
               <div>
                 <p className="text-xl font-bold text-[var(--foreground)]">Admin kirish</p>
                 <p className="mt-2 text-sm leading-6 text-[var(--brand-muted)]">
-                  Avval hisobga kirgan bo'ling. Maxfiy parol to'g'ri bo'lsa, hozirgi hisob admin sifatida faollashadi.
+                  Maxfiy parol to'g'ri bo'lsa, admin panel ochiladi. Ro'yxatdan o'tish shart emas.
                 </p>
               </div>
               <button
@@ -52,7 +52,7 @@ export function AdminGateLogo() {
                 />
               </label>
               <button className="focus-ring min-h-11 rounded-[14px] bg-[var(--brand-primary)] px-5 py-3 text-sm font-bold text-white shadow-[var(--shadow-button)] hover:bg-[var(--brand-deep)]">
-                Adminni faollashtirish
+                Admin panelga kirish
               </button>
             </form>
           </div>

@@ -31,9 +31,15 @@ This adds:
 - safe public RPC functions for leaderboard/analytics
 - stricter profile read policy
 
-## First Admin
+## Admin Access
 
-Register the first user from `/register`, then promote it:
+Admin access does not require registration.
+
+1. Click the BataBank logo 5 times.
+2. Enter `ADMIN_GATE_SECRET`.
+3. `/admin` opens using `SUPABASE_SERVICE_ROLE_KEY`.
+
+Manual admin promotion is optional:
 
 ```sql
 update public.profiles
@@ -43,12 +49,6 @@ set role = 'admin',
 where contact = 'admin@example.com'
    or id = 'AUTH_USER_UUID_HERE';
 ```
-
-Admin bootstrap:
-- user registers/logs in normally
-- user clicks the BataBank logo 5 times
-- user enters `ADMIN_GATE_SECRET`
-- the server uses `SUPABASE_SERVICE_ROLE_KEY` to promote the current user to admin
 
 Keep `SUPABASE_SERVICE_ROLE_KEY` only in server/Railway variables. Never expose it in client code and never name it with `NEXT_PUBLIC_`.
 
