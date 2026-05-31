@@ -23,8 +23,8 @@ export function AdminGateLogo() {
         <BrandLogo size="md" />
       </button>
       {open ? (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#18392b]/30 px-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-[24px] border border-[var(--brand-line)] bg-white p-6 shadow-[var(--shadow-soft)]">
+        <div className="fixed inset-0 z-[100] overflow-y-auto bg-[#18392b]/30 px-4 pb-8 pt-28 backdrop-blur-sm sm:pt-32">
+          <div className="mx-auto w-full max-w-md rounded-[24px] border border-[var(--brand-line)] bg-white p-6 shadow-[var(--shadow-soft)]">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xl font-bold text-[var(--foreground)]">Admin kirish</p>
