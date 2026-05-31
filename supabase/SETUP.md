@@ -14,6 +14,7 @@
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `NEXT_PUBLIC_APP_URL=http://localhost:3004`
    - `ADMIN_GATE_SECRET`
+   - `SUPABASE_SERVICE_ROLE_KEY`
 
 ## Existing Deployment Migration
 
@@ -43,9 +44,13 @@ where contact = 'admin@example.com'
    or id = 'AUTH_USER_UUID_HERE';
 ```
 
-Admin access requires both:
-- successful hidden logo gate using `ADMIN_GATE_SECRET`
-- logged-in profile with `role = 'admin'`
+Admin bootstrap:
+- user registers/logs in normally
+- user clicks the BataBank logo 5 times
+- user enters `ADMIN_GATE_SECRET`
+- the server uses `SUPABASE_SERVICE_ROLE_KEY` to promote the current user to admin
+
+Keep `SUPABASE_SERVICE_ROLE_KEY` only in server/Railway variables. Never expose it in client code and never name it with `NEXT_PUBLIC_`.
 
 ## Privacy Notes
 

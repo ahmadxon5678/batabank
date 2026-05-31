@@ -74,7 +74,7 @@ security definer
 set search_path = public
 as $$
 begin
-  if not public.is_admin() then
+  if coalesce(auth.role(), '') <> 'service_role' and not public.is_admin() then
     if new.role is distinct from old.role
       or new.approval_status is distinct from old.approval_status
       or new.approval_note is distinct from old.approval_note

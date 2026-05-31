@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getNumber, getString } from "@/lib/format";
+import { createAdminClient, hasSupabaseAdminEnv } from "@/lib/supabase/admin";
 import { createClient, hasSupabaseEnv } from "@/lib/supabase/server";
 import type { InstitutionType, PickupStatus, Profile } from "@/lib/types";
 
@@ -34,6 +35,7 @@ const messages = {
   institutionReviewed: "Tashkilot arizasi ko'rib chiqildi",
   pickupSaved: "Olib ketish holati yangilandi",
   badSecret: "Maxfiy parol noto'g'ri",
+  missingAdminEnv: "SUPABASE_SERVICE_ROLE_KEY Railway sozlamasiga kiritilmagan",
 };
 
 async function requireEnv() {
@@ -310,11 +312,33 @@ export async function updatePickupStatus(formData: FormData) {
 }
 
 export async function unlockAdminGate(formData: FormData) {
+  const { user } = await requireUser();
   const secret = getString(formData, "secret");
   const expected = process.env.ADMIN_GATE_SECRET;
 
   if (!expected || secret !== expected) {
     redirect(`/dashboard?error=${encodeURIComponent(messages.badSecret)}`);
+  }
+
+  if (!hasSupabaseAdminEnv()) {
+    redirect(`/dashboard?error=${encodeURIComponent(messages.missingAdminEnv)}`);
+  }
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("profiles")
+    .update({
+      role: "admin",
+      approval_status: "approved",
+      approval_note: null,
+      approved_by: user.id,
+      approved_at: new Date().toISOString(),
+      rejected_at: null,
+    })
+    .eq("id", user.id);
+
+  if (error) {
+    redirect(`/dashboard?error=${encodeURIComponent(error.message)}`);
   }
 
   const cookieStore = await cookies();

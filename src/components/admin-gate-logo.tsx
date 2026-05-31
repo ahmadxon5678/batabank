@@ -26,7 +26,7 @@ export function AdminGateLogo() {
         <div className="absolute left-0 z-40 mt-2 w-[min(320px,calc(100vw-32px))] rounded-[18px] border border-[var(--brand-line)] bg-white p-4 shadow-[var(--shadow-soft)]">
           <p className="text-sm font-bold text-[var(--foreground)]">Admin kirish</p>
           <p className="mt-1 text-xs leading-5 text-[var(--brand-muted)]">
-            Maxfiy parol admin rolini almashtirmaydi. Admin panel uchun hisobingiz ham admin bo'lishi kerak.
+            Maxfiy parol to'g'ri bo'lsa, hozirgi hisob admin sifatida faollashadi.
           </p>
           <form action={unlockAdminGate} className="mt-3 flex gap-2">
             <input

@@ -32,9 +32,11 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 NEXT_PUBLIC_APP_URL=http://localhost:3004
 ADMIN_GATE_SECRET=change-this-secret
+SUPABASE_SERVICE_ROLE_KEY=server-only-service-role-key
 ```
 
 For Railway, add the same variables in the Railway service variables. In production, set `NEXT_PUBLIC_APP_URL` to the Railway public URL.
+`SUPABASE_SERVICE_ROLE_KEY` must stay server-side only. Never expose it with a `NEXT_PUBLIC_` prefix.
 
 ## Supabase Setup
 
@@ -68,7 +70,8 @@ where contact = 'admin@example.com'
 Admin panel access:
 - click the BataBank logo 5 times
 - enter `ADMIN_GATE_SECRET`
-- you must also be logged in as a user with `profiles.role = 'admin'`
+- the currently logged-in user is promoted to admin automatically
+- after that `/admin` opens normally
 
 ## Badge Ladder
 
